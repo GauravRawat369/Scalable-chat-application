@@ -1,62 +1,20 @@
-// require('dotenv').config()
-// const express = require('express');
-// const { createServer } = require('http');
-// const { Server } = require('socket.io');
-// const redis = require('redis');
-
-// const PORT =  process.env.PORT || 3000;
-// const app = express();
-// const server = createServer(app);
-
-// const io = new Server(server, {
-//   cors: {
-//     origin: "*",
-//     methods: ["GET", "POST"],
-//     credentials: true
-//   }
-// });
-
-// let onlineClients = [];
-
-
-
-// io.on('connection', (socket) => {
-//   console.log(`A new user is connected: ${socket.id}`);
-// ;
-
-//   socket.emit('onlineClients', onlineClients.filter(id => id !== socket.id));
-//   socket.broadcast.emit('online', socket.id);
-//   onlineClients.push(socket.id);
-
-//   socket.on('message', (data) => {
-//     const { sender_name,to, from, message } = data;
-//     io.to(to).emit('message', { sender_name,from, message });
-//   });
-
-//   socket.on('disconnect', () => {
-//     console.log(`User disconnected: ${socket.id}`);
-//     onlineClients = onlineClients.filter(id => id !== socket.id);
-//     io.emit('offline', socket.id);
-//   });
-// });
-
-// server.listen(PORT, () => {
-//   console.log(`Server is running at http://localhost:${PORT}`);
-// });
-
-
-require('dotenv').config();
-const express = require('express');
-const { createServer } = require('http');
-const { Server } = require('socket.io');
-const Redis = require("ioredis");
-
+import dotenv from "dotenv"
+dotenv.config()
+import Redis from "ioredis"
+import express from "express";
+import {createServer} from "http"
+import {Server}  from "socket.io";
 const serviceUri = process.env.AIVEN_REDIS_URL
 const redisSubscriber = new Redis(serviceUri);
 const redisPublisher = new Redis(serviceUri);
+import connectToMongodb from "../server/db/connectToMongodb.js";
+import authRoutes from "./routes/auth.route.js"
 
-const PORT = process.env.PORT || 3000;
+
+
+const PORT = process.env.PORT || 8001;
 const app = express();
+app.use(express.json())
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
@@ -110,6 +68,9 @@ io.on('connection', (socket) => {
   });
 });
 
+app.use("/api/auth",authRoutes)
+
 server.listen(PORT, () => {
+  connectToMongodb();
   console.log(`Server is running at http://localhost:${PORT}`);
 });

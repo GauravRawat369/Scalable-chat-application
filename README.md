@@ -1,2 +1,0 @@
-# Scalable-chat-application
- 
