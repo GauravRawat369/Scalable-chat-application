@@ -1,12 +1,13 @@
 import mongoose from "mongoose";
 
+
 const userSchema = new mongoose.Schema({
     username: {
         type: String,
         required: true,
         unique: true,
     },
-    mail:{
+    email:{
         type: String,
         required: true,
     },
@@ -17,11 +18,12 @@ const userSchema = new mongoose.Schema({
     gender:{
         type: String,
         require: true,
+        enum:["Male","Female"],
     },
     profileimg:{
         type: String,
-        default: "https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
+        default: ""
     }
-})
+},{timestamps:true})
 const UserModel = mongoose.model("UserData",userSchema);
 export default UserModel;

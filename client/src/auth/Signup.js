@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "../Pages/pages.css";
-import { useNavigate } from "react-router-dom";
-import axios from "axios"
+import { Link } from "react-router-dom";
+import axios from "axios";
 import {
   Form,
   FormGroup,
@@ -9,9 +9,8 @@ import {
   Input,
   Label,
   Button,
-  Option,
   Select,
-  Link,
+  Option,
 } from "@ui5/webcomponents-react";
 import Alert from "../Components/Alert.js";
 
@@ -20,7 +19,7 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [gender, setGender] = useState("");
-  const [alert, setAlert] = useState(null);
+  const [alert, setAlert] = useState("Male");
   const showAlert = (message, type) => {
     setAlert({
       mes: message,
@@ -30,28 +29,24 @@ const Signup = () => {
       setAlert(null);
     }, 1500);
   };
-  const navigate = useNavigate();
-  const handleChange = ()=>{
-    navigate("/login")
-  }
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if ((!username )|| (!email) || (!password) || (!gender)) {
+    if (!username || !email || !password || !gender) {
       showAlert("Please fill all detials", "danger");
       return;
     }
-    // console.log(username);
-    // console.log(email);
-    // console.log(password);
-    // console.log(gender);
-    await axios.post(`http://localhost:3000/api/auth/signup`,{email,username,password,gender})
+    console.log(username);
+    console.log(email);
+    console.log(password);
+    console.log(gender);
+    await axios.post(`http://localhost:8000/api/auth/signup`,{email,username,password,gender})
     .then(res =>{
         console.log(res);
         if(res.data.status === "error")
         {
             showAlert(res.data.message, "danger");
             return
-        
+
         }
         showAlert("Signup Successfull", "success");
     })
@@ -69,7 +64,7 @@ const Signup = () => {
             }}
             titleText="Signup Form"
           >
-            <FormGroup titleText="Signup Data">
+            <FormGroup titleText="">
               <FormItem label={<Label required>Name</Label>}>
                 <Input
                   required
@@ -87,7 +82,6 @@ const Signup = () => {
               </FormItem>
               <FormItem label={<Label required>Gender</Label>}>
                 <Select
-                  value={gender}
                   onChange={(e) => setGender(e.target.value)}
                 >
                   <Option>Male</Option>
@@ -103,21 +97,22 @@ const Signup = () => {
                 />
               </FormItem>
               <FormItem>
-                <Link design="Default" onClick={handleChange} >Login</Link>
+                <Link to="/login" style={{ textDecoration: "none" }}>
+                  Already have account?
+                </Link>
               </FormItem>
             </FormGroup>
-
-            <Button
-              design="Emphasized"
-              onClick={handleSubmit}
-              style={{
-                width: "200px",
-                marginLeft: "20px",
-              }}
-            >
-              Submit
-            </Button>
           </Form>
+          <Button
+            design="Emphasized"
+            onClick={handleSubmit}
+            style={{
+              width: "200px",
+              marginLeft: "20px",
+            }}
+          >
+            Submit
+          </Button>
         </div>
       </div>
     </div>

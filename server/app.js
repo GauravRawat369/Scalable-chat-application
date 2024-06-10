@@ -1,6 +1,8 @@
 import dotenv from "dotenv"
 dotenv.config()
+import cookieParser from "cookie-parser";
 import Redis from "ioredis"
+import cors from "cors"
 import express from "express";
 import {createServer} from "http"
 import {Server}  from "socket.io";
@@ -9,12 +11,15 @@ const redisSubscriber = new Redis(serviceUri);
 const redisPublisher = new Redis(serviceUri);
 import connectToMongodb from "../server/db/connectToMongodb.js";
 import authRoutes from "./routes/auth.route.js"
-
+import messageRoutes from "./routes/message.route.js"
+import userRoutes from "./routes/user.route.js"
 
 
 const PORT = process.env.PORT || 8001;
 const app = express();
-app.use(express.json())
+app.use(cors());
+app.use(express.json())//to parse the incomming request with json payloads
+app.use(cookieParser())//to parse the cookies
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
@@ -69,7 +74,8 @@ io.on('connection', (socket) => {
 });
 
 app.use("/api/auth",authRoutes)
-
+app.use("/api/messages",messageRoutes)
+app.use("/api/user",userRoutes)
 server.listen(PORT, () => {
   connectToMongodb();
   console.log(`Server is running at http://localhost:${PORT}`);
