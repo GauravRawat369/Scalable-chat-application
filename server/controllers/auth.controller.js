@@ -65,6 +65,10 @@ export const login =async (req,res)=>{
                 res.status(400).json({error:"Invalid username or password"})
             }
         }
+        else
+        {
+            res.status(400).json({error:"Invalid username or password"})
+        }
     } catch (error) {
         console.log("Error in login controller",error.message)
         res.status(500).json({error : " Internal server error"})

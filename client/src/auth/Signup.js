@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import "../Pages/pages.css";
 import { Link } from "react-router-dom";
-import axios from "axios";
 import {
   Form,
   FormGroup,
@@ -12,50 +11,25 @@ import {
   Select,
   Option,
 } from "@ui5/webcomponents-react";
-import Alert from "../Components/Alert.js";
+import useSignup from "../hooks/useSignup";
 
 const Signup = () => {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [gender, setGender] = useState("");
-  const [alert, setAlert] = useState("Male");
-  const showAlert = (message, type) => {
-    setAlert({
-      mes: message,
-      type: type,
-    });
-    setTimeout(() => {
-      setAlert(null);
-    }, 1500);
-  };
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!username || !email || !password || !gender) {
-      showAlert("Please fill all detials", "danger");
-      return;
-    }
-    console.log(username);
-    console.log(email);
-    console.log(password);
-    console.log(gender);
-    await axios.post(`http://localhost:8000/api/auth/signup`,{email,username,password,gender})
-    .then(res =>{
-        console.log(res);
-        if(res.data.status === "error")
-        {
-            showAlert(res.data.message, "danger");
-            return
-
-        }
-        showAlert("Signup Successfull", "success");
+    const [inputs,setInputs] = useState({
+        username: '',
+        email:'',
+        password:'',
+        gender:'Male',
     })
+    const {loading,signup} = useSignup();
+  const handleSubmit = async (e)=> {
+    e.preventDefault();
+    console.log(inputs)
+    await signup(inputs)
   };
   return (
     <div className="main-page">
       <div className="main-page-left"></div>
       <div className="main-page-right">
-        <Alert alert={alert} />
         <div className="signup-form">
           <Form
             backgroundDesign="Transparent"
@@ -68,32 +42,33 @@ const Signup = () => {
               <FormItem label={<Label required>Name</Label>}>
                 <Input
                   required
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  value={inputs.username}
+                        onChange={(e) => setInputs({...inputs, username: e.target.value})}
                 />
               </FormItem>
               <FormItem label={<Label required>Email</Label>}>
                 <Input
                   type="email"
                   required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={inputs.email}
+                        onChange={(e) => setInputs({...inputs, email: e.target.value})}
                 />
               </FormItem>
               <FormItem label={<Label required>Gender</Label>}>
                 <Select
-                  onChange={(e) => setGender(e.target.value)}
+                  value={inputs.gender}
+                        onChange={(e) => setInputs({...inputs, gender: e.target.value})}
                 >
-                  <Option>Male</Option>
-                  <Option>Female</Option>
+                  <Option >Male</Option>
+                  <Option >Female</Option>
                 </Select>
               </FormItem>
               <FormItem label={<Label required>Password</Label>}>
                 <Input
                   type="password"
                   required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={inputs.password}
+                        onChange={(e) => setInputs({...inputs, password: e.target.value})}
                 />
               </FormItem>
               <FormItem>

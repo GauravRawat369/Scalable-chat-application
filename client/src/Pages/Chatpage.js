@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { io } from "socket.io-client";
+import useLogout from '../hooks/useLogout';
 let socket;
 
 function Chatpage() {
@@ -9,6 +10,7 @@ function Chatpage() {
   const [messages, setMessages] = useState([]);
   const [onlineIds, setOnlineIds] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
+  const {logout} = useLogout()
 
   useEffect(() => {
     if (user) {
@@ -80,6 +82,9 @@ function Chatpage() {
             onChange={(e) => setUsername(e.target.value)} 
           />
           <button onClick={() => setUser(true)}>Send</button>
+          <div className="logout-buttom">
+            <button onClick={logout}>Logout button</button>
+          </div>
         </div>
       ) : (
         <>

@@ -11,6 +11,7 @@ import {
   Button,
 } from "@ui5/webcomponents-react";
 import Alert from "../Components/Alert.js";
+import axios from "axios"
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -27,15 +28,26 @@ const Login = () => {
     }, 1500);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     if ((!username) || (!email) || (!password)) {
       showAlert("Please fill all detials", "danger");
       return;
     }
-    console.log(username);
-    console.log(email);
-    console.log(password);
+    // console.log(username);
+    // console.log(email);
+    // console.log(password);
+    try {
+        await axios.post(`http://localhost:8000/api/auth/login`,{username,email,password})
+    .then(res=>{
+        console.log(res);
+        showAlert("Login Successfull", "success");
+        
+    })
+    } catch (error) {
+        console.log("Error in Login page :",error)
+        showAlert(error.response.data.error,"danger")
+    }
   };
   return (
     <ThemeProvider>
