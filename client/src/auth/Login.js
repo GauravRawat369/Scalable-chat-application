@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import "../Pages/pages.css";
 import { Link } from "react-router-dom";
-import { ThemeProvider } from '@ui5/webcomponents-react';
 import {
   Form,
   FormGroup,
@@ -10,104 +9,76 @@ import {
   Label,
   Button,
 } from "@ui5/webcomponents-react";
-import Alert from "../Components/Alert.js";
-import axios from "axios"
+import useLogin from "../hooks/useLogin";
 
 const Login = () => {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [alert, setAlert] = useState(null);
-  const showAlert = (message, type) => {
-    setAlert({
-      mes: message,
-      type: type,
-    });
-    setTimeout(() => {
-      setAlert(null);
-    }, 1500);
-  };
-
-  const handleSubmit = async(e) => {
-    e.preventDefault();
-    if ((!username) || (!email) || (!password)) {
-      showAlert("Please fill all detials", "danger");
-      return;
-    }
-    // console.log(username);
-    // console.log(email);
-    // console.log(password);
-    try {
-        await axios.post(`http://localhost:8000/api/auth/login`,{username,email,password})
-    .then(res=>{
-        console.log(res);
-        showAlert("Login Successfull", "success");
-        
-    })
-    } catch (error) {
-        console.log("Error in Login page :",error)
-        showAlert(error.response.data.error,"danger")
-    }
-  };
-  return (
-    <ThemeProvider>
-    <div className="main-page">
-      <div className="main-page-left"></div>
-      <div className="main-page-right">
-        <Alert alert={alert} />
-        <div className="login-form">
-          <Form
-            backgroundDesign="Transparent"
-            style={{
-              alignItems: "center",
-            }}
-            titleText="login Form"
-          >
-            <FormGroup titleText="login Data">
-            <FormItem label={<Label required>Name</Label>}>
-                <Input
-                  required
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                />
-              </FormItem>
-              <FormItem label={<Label required>Email</Label>}>
-                <Input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </FormItem>
-              <FormItem label={<Label required>Password</Label>}>
-                <Input
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </FormItem>
-              <FormItem>
-                  <Link to="/signup" style={{ textDecoration: "none" }}>
-                    Create account
-                  </Link>
-              </FormItem>
-            </FormGroup>
-          </Form>
-          <Button
-            design="Emphasized"
-            onClick={handleSubmit}
-            style={{
-              width: "200px",
-              marginLeft: "20px",
-            }}
-          >
-            Submit
-          </Button>
-        </div>
-      </div>
+  const [inputs,setInputs] = useState({
+    username: '',
+    email:'',
+    password:''
+})
+const {loading,login} = useLogin();
+const handleSubmit = async (e)=> {
+  e.preventDefault();
+  console.log(inputs)
+  await login(inputs)
+};
+return (
+<div className="main-page">
+  <div className="main-page-left"></div>
+  <div className="main-page-right">
+    <div className="signup-form">
+      <Form
+        backgroundDesign="Transparent"
+        style={{
+          alignItems: "center",
+        }}
+        titleText="Signup Form"
+      >
+        <FormGroup titleText="">
+          <FormItem label={<Label required>Name</Label>}>
+            <Input
+              required
+              value={inputs.username}
+                    onChange={(e) => setInputs({...inputs, username: e.target.value})}
+            />
+          </FormItem>
+          <FormItem label={<Label required>Email</Label>}>
+            <Input
+              type="email"
+              required
+              value={inputs.email}
+                    onChange={(e) => setInputs({...inputs, email: e.target.value})}
+            />
+          </FormItem>
+          <FormItem label={<Label required>Password</Label>}>
+            <Input
+              type="password"
+              required
+              value={inputs.password}
+                    onChange={(e) => setInputs({...inputs, password: e.target.value})}
+            />
+          </FormItem>
+          <FormItem>
+            <Link to="/signup" style={{ textDecoration: "none" }}>
+              Already have account?
+            </Link>
+          </FormItem>
+        </FormGroup>
+      </Form>
+      <Button
+        design="Emphasized"
+        onClick={handleSubmit}
+        style={{
+          width: "200px",
+          marginLeft: "20px",
+        }}
+      >
+        Submit
+      </Button>
     </div>
-    </ThemeProvider>
+  </div>
+</div>
   );
 };
 

@@ -1,17 +1,16 @@
-import  { useState } from 'react'
+import { useState } from "react"
+import { useAuthContext } from "../context/AuthContext";
 import toast from 'react-hot-toast';
 import axios from 'axios';
-import { useAuthContext } from '../context/AuthContext';
-
-const useSignup = () => {
+const useLogin = ()=>{
     const [loading,setLoading] = useState(false);
     const {setAuthUser} = useAuthContext() 
-    const signup =async ({username,email,password,gender})=>{
-        const success = handleInputErrros({username,email,password,gender})
+    const login =async ({username,email,password})=>{
+        const success = handleInputErrros({username,email,password})
         if(!success)return;
         setLoading(true)
         try {
-            const res = await axios.post(`http://localhost:8000/api/auth/signup`,{username,email,password,gender})
+            const res = await axios.post(`http://localhost:8000/api/auth/login`,{username,email,password})
             const data = res.data;
             if(data.error){
                 throw new Error(data.error)
@@ -21,19 +20,19 @@ const useSignup = () => {
             setAuthUser(data)
             console.log(data)
         } catch (error) {
-            console.log("Error in useSignup hook : ",error)
+            console.log("Error in useLogin hook : ",error)
             toast.error(error.message)
         }finally{
             setLoading(false)
         }
     }
-    return {loading,signup}
-};
+    return {loading,login}
+}
+export default useLogin;
 
-export default useSignup
 
-function handleInputErrros({username,email,password,gender}){
-    if(!username || !email || !password || !gender)
+function handleInputErrros({username,email,password}){
+    if(!username || !email || !password)
     {
         toast.error("Please fill all the fields")
         return false;

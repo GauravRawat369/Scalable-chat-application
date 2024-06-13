@@ -38,6 +38,29 @@
     z-index: 1;
     transition: all 1s ease-in-out;
   }
+.chat-main-page{
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+.conversation-sidebar,
+.conversation-div{
+    width: 340px;
+    height: 100%;
+    margin: 5px 5px;
+}
+.chat-page{
+    width: 100%;
+    height: 90vh;
+    margin: 5px 5px;
+}
+.card-header-clicked {
+    border: 4px solid blue ;
+    border-radius: 20px;
+  }
 @media only screen and (max-width: 600px) {
     .main-page{
         flex-direction:column-reverse;

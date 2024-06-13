@@ -1,120 +1,132 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { io } from "socket.io-client";
-import useLogout from '../hooks/useLogout';
+import useLogout from "../hooks/useLogout";
+import { UserConversation } from "../Components/UserConversation";
+import useGetConversations from "../hooks/useGetConversations";
+import { Page, Button, Bar, Label } from "@ui5/webcomponents-react";
+import "@ui5/webcomponents-icons/dist/settings.js";
+import "@ui5/webcomponents-icons/dist/home.js";
+import useConversation from "../zustand/useConversation";
+import { IllustratedMessage } from '@ui5/webcomponents-react';
+import { useAuthContext } from "../context/AuthContext";
+
 let socket;
 
 function Chatpage() {
-  const [username, setUsername] = useState("");
-  const [user, setUser] = useState(false);
-  const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState([]);
-  const [onlineIds, setOnlineIds] = useState([]);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const {logout} = useLogout()
+  const { logout } = useLogout();
+  const {selectedConversation} =useConversation();
+  const { loading, conversations } = useGetConversations();
+  const {authUser} = useAuthContext()
+  // useEffect(() => {
+  //   if (authUser) {
+  //     socket = io("http://localhost:3000", {
+  //       transports: ["websocket"],
+  //     });
 
-  useEffect(() => {
-    if (user) {
-      socket = io("http://localhost:3000", {
-        transports: ["websocket"],
-      });
+  //     socket.on("connect", () => {
+  //       console.log("Connected with ID:", socket.id);
+  //       socket.emit("username", authUser.username);
+  //     });
 
-      socket.on("connect", () => {
-        console.log("Connected with ID:", socket.id);
-        socket.emit("username", username);
-      });
+  //     socket.on("onlineClients", (clients) => {
+  //       setOnlineIds(clients);
+  //     });
 
-      socket.on("onlineClients", (clients) => {
-        setOnlineIds(clients);
-      });
+  //     socket.on("online", (userId) => {
+  //       setOnlineIds(prev => {
+  //         if (!prev.includes(userId)) {
+  //           return [...prev, userId];
+  //         }
+  //         return prev;
+  //       });
 
-      socket.on("online", (userId) => {
-        setOnlineIds(prev => {
-          if (!prev.includes(userId)) {
-            return [...prev, userId];
-          }
-          return prev;
-        });
-        
-      });
+  //     });
 
-      socket.on("offline", (userId) => {
-        setOnlineIds(prev => prev.filter(id => id !== userId));
-      });
+  //     socket.on("offline", (userId) => {
+  //       setOnlineIds(prev => prev.filter(id => id !== userId));
+  //     });
 
-      socket.on("message", (data) => {
-        setMessages(prevMessages => [...prevMessages, data]);
-        console.log("Received message:", data);
-      });
+  //     socket.on("message", (data) => {
+  //       setMessages(prevMessages => [...prevMessages, data]);
+  //       console.log("Received message:", data);
+  //     });
 
-      return () => {
-        socket.off("connect");
-        socket.off("onlineClients");
-        socket.off("online");
-        socket.off("offline");
-        socket.off("message");
-        socket.disconnect();
-      };
-    }
-  }, [user, username]);
+  //     return () => {
+  //       socket.off("connect");
+  //       socket.off("onlineClients");
+  //       socket.off("online");
+  //       socket.off("offline");
+  //       socket.off("message");
+  //       socket.disconnect();
+  //     };
+  //   }
+  // }, [authUser, authUser.username]);
 
-  const handleSubmit = () => {
-    if (message.trim() !== '' && selectedUser) {
-      const msgPayload = {
-        sender_name : username,
-        to: selectedUser,
-        from: socket.id,
-        message
-      };
-      socket.emit("message", msgPayload);
-      setMessages(prevMessages => [...prevMessages, msgPayload]);
-      setMessage("");
-    }
-  };
+  // const handleSubmit = () => {
+  //   if (message.trim() !== '' && selectedUser) {
+  //     const msgPayload = {
+  //       sender_name : authUser.username,
+  //       to: selectedUser,
+  //       from: socket.id,
+  //       message
+  //     };
+  //     socket.emit("message", msgPayload);
+  //     setMessages(prevMessages => [...prevMessages, msgPayload]);
+  //     setMessage("");
+  //   }
+  // };
 
   return (
     <div className="App">
-      {!user ? (
-        <div>
-          <input 
-            type="text" 
-            placeholder="Enter your name" 
-            value={username} 
-            onChange={(e) => setUsername(e.target.value)} 
-          />
-          <button onClick={() => setUser(true)}>Send</button>
-          <div className="logout-buttom">
-            <button onClick={logout}>Logout button</button>
-          </div>
-        </div>
-      ) : (
-        <>
-          <div>
-            <h3>Online Users:</h3>
-            {onlineIds.map((id) => (
-              <h3 key={id} onClick={() => setSelectedUser(id)}>{id}</h3>
-            ))}
-          </div>
-          {selectedUser && (
-            <>
-              <input 
-                type="text" 
-                placeholder="Message" 
-                value={message} 
-                onChange={(e) => setMessage(e.target.value)} 
-              />
-              <button onClick={handleSubmit}>Send</button>
-            </>
-          )}
-          <div>
-            <h3>Messages:</h3>
-            <ul>
-              {messages.map((msg, index) => (
-                <li key={index}>{msg.sender_name}:{msg.from}:{msg.message}</li>
+      <button onClick={logout}>Logout Button</button>
+      <div className="chat-main-page">
+        <div className="conversation-sidebar">
+          <Page
+            backgroundDesign="Transparent"
+            style={{
+              height: "500px",
+              width: "350px",
+            }}
+          >
+            <div className="conversation-div">
+              {conversations.map((conversation) => (
+                <UserConversation
+                  key={conversation._id}
+                  conversation={conversation}
+                />
               ))}
-            </ul>
-          </div>
-        </>
-      )}
+            </div>
+          </Page>
+        </div>
+        <div className="chat-page">
+          <Page
+            backgroundDesign="Transparent"
+           
+            header={
+              <Bar
+                design="Header"
+                endContent={<Button icon="settings" title="s" ><a href={selectedConversation.profileimg}></a></Button>}
+                startContent={<Button icon="home" title="Go Home" ></Button>}
+              >
+                <Label style={{ fontWeight: "600" }}>
+                 {selectedConversation ? (`Chat between ${selectedConversation?.username} and ${authUser?.username}`) : ("No one is Selected")}
+                </Label>
+              </Bar>
+            }
+            style={{
+              height: "90vh",
+            }}
+          >
+            {!selectedConversation && (
+                <IllustratedMessage
+                subtitle={{}}
+                subtitleText="No one is Selected"
+                titleText="Select someone to send message"
+              />
+            )}
+          </Page>
+        </div>
+      </div>
     </div>
   );
 }

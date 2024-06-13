@@ -17,9 +17,12 @@ import userRoutes from "./routes/user.route.js"
 
 const PORT = process.env.PORT || 8001;
 const app = express();
-app.use(cors());
+app.use(cookieParser());//to parse the cookies
+app.use(cors(
+    {origin: 'http://localhost:3000', 
+    credentials: true} 
+));
 app.use(express.json())//to parse the incomming request with json payloads
-app.use(cookieParser())//to parse the cookies
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
@@ -75,7 +78,7 @@ io.on('connection', (socket) => {
 
 app.use("/api/auth",authRoutes)
 app.use("/api/messages",messageRoutes)
-app.use("/api/user",userRoutes)
+app.use("/api/users",userRoutes)
 server.listen(PORT, () => {
   connectToMongodb();
   console.log(`Server is running at http://localhost:${PORT}`);
