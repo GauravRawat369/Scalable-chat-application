@@ -3,20 +3,25 @@ import { io } from "socket.io-client";
 import useLogout from "../hooks/useLogout";
 import { UserConversation } from "../Components/UserConversation";
 import useGetConversations from "../hooks/useGetConversations";
-import { Page, Button, Bar, Label } from "@ui5/webcomponents-react";
+import { Page, Button, Bar, Label,IllustratedMessage ,TextArea, Avatar } from "@ui5/webcomponents-react";
 import "@ui5/webcomponents-icons/dist/settings.js";
 import "@ui5/webcomponents-icons/dist/home.js";
 import useConversation from "../zustand/useConversation";
-import { IllustratedMessage } from '@ui5/webcomponents-react';
 import { useAuthContext } from "../context/AuthContext";
+import Message from "../Components/Message";
 
 let socket;
 
 function Chatpage() {
   const { logout } = useLogout();
-  const {selectedConversation} =useConversation();
+  const {selectedConversation,setSelectedConversation} =useConversation();
   const { loading, conversations } = useGetConversations();
   const {authUser} = useAuthContext()
+
+  useEffect(()=>{
+
+    return ()=>setSelectedConversation(null)
+  },[])
   // useEffect(() => {
   //   if (authUser) {
   //     socket = io("http://localhost:3000", {
@@ -84,7 +89,7 @@ function Chatpage() {
           <Page
             backgroundDesign="Transparent"
             style={{
-              height: "500px",
+              height: "95%",
               width: "350px",
             }}
           >
@@ -103,28 +108,43 @@ function Chatpage() {
             backgroundDesign="Transparent"
            
             header={
-              <Bar
-                design="Header"
-                endContent={<Button icon="settings" title="s" ><a href={selectedConversation.profileimg}></a></Button>}
-                startContent={<Button icon="home" title="Go Home" ></Button>}
-              >
+              <Bar design="Header" startContent={selectedConversation&&(<Avatar style={{padding:"5px"}}><img src={selectedConversation?.profileimg}/></Avatar>)} endContent={selectedConversation&&(<Avatar style={{padding:"5px"}}><img src={authUser?.profileimg}/></Avatar>)}>
                 <Label style={{ fontWeight: "600" }}>
                  {selectedConversation ? (`Chat between ${selectedConversation?.username} and ${authUser?.username}`) : ("No one is Selected")}
                 </Label>
               </Bar>
             }
             style={{
-              height: "90vh",
+              height: "100%"
             }}
           >
-            {!selectedConversation && (
+            {!selectedConversation ? (
                 <IllustratedMessage
                 subtitle={{}}
                 subtitleText="No one is Selected"
                 titleText="Select someone to send message"
               />
+            ):(
+              <>
+              <Message messageFrom = "sender"/>
+              <Message messageFrom = "receiver"/>
+              </>
             )}
+            
           </Page>
+          <div className="input-semd-button-div">
+          <TextArea
+          onChange={function _a(){}}
+          onInput={function _a(){}}
+          onScroll={function _a(){}}
+          onSelect={function _a(){}}
+          valueState="None"
+          style={{marginBottom:"50px",marginRight:"4px",marginLeft:"4px"}}
+          growing
+          rows={1}
+        />
+        <Button style={{width:"100px"}}>Send</Button>
+        </div>
         </div>
       </div>
     </div>
