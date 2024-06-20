@@ -3,6 +3,7 @@ import messageModel from "../models/message.model.js"
 export const sendMessage = async(req,res)=>{
     try {
         const {message} = req.body;
+        console.log(message)
         const {id : receiverId }  = req.params;//receiver id
         const senderId = req.user._id;//from middleware from cookies
 

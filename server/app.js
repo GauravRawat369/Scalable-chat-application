@@ -18,10 +18,16 @@ import userRoutes from "./routes/user.route.js"
 const PORT = process.env.PORT || 8001;
 const app = express();
 app.use(cookieParser());//to parse the cookies
-app.use(cors(
-    {origin: 'http://localhost:3000', 
-    credentials: true} 
-));
+const corsOptions = {
+  origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      return callback(null, origin);
+  },
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 app.use(express.json())//to parse the incomming request with json payloads
 const server = createServer(app);
 const io = new Server(server, {
@@ -32,21 +38,22 @@ const io = new Server(server, {
   }
 });
 
-let onlineClients = [];
+let onlineClients = {};
 
-redisSubscriber.on('message', (channel, msg) => { // Changed 'message' to 'msg'
+redisSubscriber.on('message', (channel, msg) => {
   console.log(`Received message from ${channel}: ${msg}`);
   switch (channel) {
     case 'onlineClients':
       io.emit('onlineClients', JSON.parse(msg));
       break;
     case 'online':
-      io.emit('online', msg);
-      onlineClients.push(msg);
+      const user = JSON.parse(msg);
+      io.emit('online', user);
+      onlineClients[user.authId] = user.socketId;
       break;
     case 'message':
-      const { sender_name, to, from, message } = JSON.parse(msg);
-      io.to(to).emit('message', { sender_name, from, message });
+      const {  to, from, message } = JSON.parse(msg);
+      io.to(onlineClients[to]).emit('message', { to, from, message });
       break;
     case 'offline':
       io.emit('offline', msg);
@@ -56,14 +63,17 @@ redisSubscriber.on('message', (channel, msg) => { // Changed 'message' to 'msg'
   }
 });
 
-
 redisSubscriber.subscribe('onlineClients', 'online', 'message', 'offline');
 
 io.on('connection', (socket) => {
   console.log(`A new user is connected: ${socket.id}`);
-
-  redisPublisher.publish('onlineClients', JSON.stringify(onlineClients.filter(id => id !== socket.id)));
-  redisPublisher.publish('online', socket.id);
+  
+  socket.on('authUser', (userId) => {
+    const user = { authId: userId, socketId: socket.id };
+    onlineClients[userId] = socket.id;
+    redisPublisher.publish('online', JSON.stringify(user));
+    redisPublisher.publish('onlineClients', JSON.stringify(onlineClients));
+  });
 
   socket.on('message', (data) => {
     redisPublisher.publish('message', JSON.stringify(data));
@@ -71,11 +81,14 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', () => {
     console.log(`User disconnected: ${socket.id}`);
-    onlineClients = onlineClients.filter(id => id !== socket.id);
+    const authId = Object.keys(onlineClients).find(key => onlineClients[key] === socket.id);
+    if (authId) {
+      delete onlineClients[authId];
+    }
     redisPublisher.publish('offline', socket.id);
+    redisPublisher.publish('onlineClients', JSON.stringify(onlineClients));
   });
 });
-
 app.use("/api/auth",authRoutes)
 app.use("/api/messages",messageRoutes)
 app.use("/api/users",userRoutes)

@@ -3,7 +3,7 @@ import UserModel from "../models/User.model.js";
 export const getUser = async (req,res) =>{
     try {
         const loggedInUserId = req.user._id;
-        const allUsersExceptUs = await UserModel.find({ _id : { $ne: loggedInUserId}});
+        const allUsersExceptUs = await UserModel.find({ _id : { $ne: loggedInUserId}}).select("-password");;
         res.status(200).json(allUsersExceptUs)
     } catch (error) {
         console.log("Error in getUser controller : ",error.message);

@@ -6,13 +6,11 @@ export const UserConversation = ({conversation}) => {
     const isSelected = selectedConversation?._id === conversation._id;
     const handleOnClick=()=>{
         setSelectedConversation(conversation)
-        console.log(conversation)
     }
   return (
     <div>
         <Card
     header={<CardHeader 
-        
         avatar={<img src={conversation.profileimg}/>} interactive  titleText={conversation.username} onClick={handleOnClick} />}
     style={{
         width: '300px',
