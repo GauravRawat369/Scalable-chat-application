@@ -1,8 +1,8 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import Home from './Pages/Chatpage.js';
-import Signup from './auth/Signup.js';
-import Login from './auth/Login.js';
+import Home from './Pages/Chatpage.jsx';
+import Signup from './auth-page/Signup.jsx';
+import Login from './auth-page/Login.jsx';
 import {Toaster} from "react-hot-toast"
 import { useAuthContext } from './context/AuthContext.jsx';
 

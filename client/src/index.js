@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { ThemeProvider } from '@ui5/webcomponents-react';
 import {AuthContextProvider} from "../src/context/AuthContext.jsx"
+import {SocketContextProvider} from "./context/SocketContext.jsx"
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./index.css";
 import App from "./App";
@@ -12,7 +13,9 @@ root.render(
   <ThemeProvider>
     <BrowserRouter>
         <AuthContextProvider>
+        <SocketContextProvider>
       <App />
+      </SocketContextProvider>
       </AuthContextProvider>
     </BrowserRouter>
   </ThemeProvider>
