@@ -8,7 +8,14 @@ const UserPage = () => {
   const { loading, conversations } = useGetConversations();
   const {onlineUsers} = useSocketContext();
   const { logout } = useLogout();
-  console.log(onlineUsers)
+
+  const onlineUserIds = onlineUsers;
+console.log(onlineUserIds);
+const onlineUserDetails = conversations.filter(user => onlineUserIds.includes(user._id));
+const offlineUsers = conversations.filter(user => !onlineUserIds.includes(user._id));
+const sortedUsers = [...onlineUserDetails, ...offlineUsers];
+  // console.log(onlineUserDetails)
+  // console.log(sortedUsers)
   return (
     <div className="conversation-sidebar">
           <Page
@@ -19,7 +26,7 @@ const UserPage = () => {
             }}
           >
             <div className="conversation-div">
-              {conversations.map((conversation) => (
+              {sortedUsers.map((conversation) => (
                 <UserConversation
                   key={conversation._id}
                   conversation={conversation}
