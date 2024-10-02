@@ -60,3 +60,6 @@ Secure authentication: Custom hooks for user authentication via JWT tokens for s
 
 ## Summary:
 This project demonstrates a full-stack, scalable chat application designed to handle real-time communication for a large number of users. While still under development, the system incorporates key design principles aimed at ensuring efficiency, security, and scalability, making it suitable for production-level use.
+
+## Problem Faced 
+![Scalable Chat Application Db](ScalableChatApplicationDatabase.png)
