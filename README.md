@@ -13,7 +13,8 @@ Note: I have made some assumptions and applied my understanding of system design
 ## Features
 * Real-time messaging: 
     * Instant communication between users with support for offline users, enabling message delivery once they reconnect.
-* Horizontal scalability: Utilizes Redis Pub/Sub to allow for communication between clients across multiple servers.
+* Horizontal scalability: 
+    * Utilizes Redis Pub/Sub to allow for communication between clients across multiple servers.
 * Optimized database writes: 
     *  Message queue system batches and writes messages to the database at regular intervals, reducing the number of operations and enhancing performance.
 Secure authentication: Custom hooks for user authentication via JWT tokens for secure signup and login processes.
