@@ -35,7 +35,7 @@ Secure authentication: Custom hooks for user authentication via JWT tokens for s
 
     * JWT Token Authentication: Implemented custom hooks to securely authenticate users via JSON Web Tokens (JWT). Users can sign up and log in, and the system ensures that only authenticated users can send or receive messages.
 
-* Message Queue System
+* Message Queue System(still under process)
 
     * Queue for Database Writes: To reduce the number of write operations and ensure that the database can handle heavy traffic, a message queue system was introduced. Messages are queued and saved in bulk to the database at regular intervals, reducing the strain on the system.
 * Read-Write Optimization
