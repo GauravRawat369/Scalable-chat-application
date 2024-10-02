@@ -64,3 +64,6 @@ This project demonstrates a full-stack, scalable chat application designed to ha
 
 ## Problem Faced 
 ![Scalable Chat Application Db](ScalableChatApplicationDatabase.png)
+
+## How I solved above problem
+https://www.mongodb.com/community/forums/t/advice-for-chat-schema-design/114166/9
