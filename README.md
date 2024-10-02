@@ -13,7 +13,8 @@ Note: I have made some assumptions and applied my understanding of system design
 ## Features
 * Real-time messaging: 
     * Instant communication between users with support for offline users, enabling message delivery once they reconnect.
-* Horizontal scalability: Utilizes Redis Pub/Sub to allow for communication between clients across multiple servers.
+* Horizontal scalability: 
+    * Utilizes Redis Pub/Sub to allow for communication between clients across multiple servers.
 * Optimized database writes: 
     *  Message queue system batches and writes messages to the database at regular intervals, reducing the number of operations and enhancing performance.
 Secure authentication: Custom hooks for user authentication via JWT tokens for secure signup and login processes.
@@ -34,7 +35,7 @@ Secure authentication: Custom hooks for user authentication via JWT tokens for s
 
     * JWT Token Authentication: Implemented custom hooks to securely authenticate users via JSON Web Tokens (JWT). Users can sign up and log in, and the system ensures that only authenticated users can send or receive messages.
 
-* Message Queue System
+* Message Queue System(still under process)
 
     * Queue for Database Writes: To reduce the number of write operations and ensure that the database can handle heavy traffic, a message queue system was introduced. Messages are queued and saved in bulk to the database at regular intervals, reducing the strain on the system.
 * Read-Write Optimization
